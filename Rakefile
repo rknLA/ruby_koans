@@ -184,7 +184,7 @@ end
 desc "Initialize local git branch to track your adventure"
 task :local_git_initialize do
   git_repo = Git.open('.', :log => Logger.new('gitlog.log'))
-  git_repo.checkout(git_repo.branch(ENV['USER']))
+  git_repo.branch(ENV['USER']).checkout
   Rake::Task[:gen].invoke
   git_repo.add('.')
   git_repo.commit("Your adventure begins here.")

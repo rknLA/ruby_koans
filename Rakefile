@@ -2,6 +2,11 @@
 # -*- ruby -*-
 
 require 'rake/clean'
+if require 'git'
+  GIT_ENABLED = true
+else
+  GIT_ENABLED = false
+end
 begin
   require 'rdoc/task'
 rescue LoadError => ex
@@ -91,6 +96,9 @@ task :walk_the_path do
   Rake::Task[:gen].invoke unless File.exists?(PROB_DIR)
   cd PROB_DIR
   ruby 'path_to_enlightenment.rb'
+  if GIT_ENABLED
+    Rake::Task[:commit_progress].invoke
+  end
 end
 
 if defined?(Rake::RDocTask)
@@ -171,5 +179,15 @@ task :run_all do
   RubyImpls.expected.each do |requested_impl|
     impl_pattern = Regexp.new(Regexp.quote(requested_impl))
     puts "No Results for #{requested_impl}" unless results.detect { |x| x.first =~ impl_pattern }
+  end
+end
+
+desc "Commit local change to a local git branch"
+task :commit_progress do
+  git_repo = Git.open('.')
+  if git_repo.branch == :master
+    puts "git master is checked out"
+  else
+    puts git_repo.branch.to_s + " is checked out"
   end
 end

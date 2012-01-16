@@ -41,6 +41,12 @@ If you don't have rake installed, just run `gem install rake`
 Any response for Ruby with a version number greater than 1.8 is fine (should be
 around 1.8.6 or more). Any version of rake will do.
 
+== Git support
+
+If you'd like to run the koans with git support, make sure to install the git gem first
+
+  [~] $ sudo gem install git
+
 == The Path To Enlightenment
 
 First run the generator to generate the koans directory:

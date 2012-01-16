@@ -194,5 +194,8 @@ end
 desc "Commit local change to a local git branch"
 task :commit_progress do
   git_repo = Git.open('.')
-  git_repo.commit("Your adventure continues!  See 'git log' for more details.")
+  git_repo.add('.', :force => true)
+  if (git_repo.diff())
+    git_repo.commit("Your adventure continues!  See 'git log' for more details.")
+  end
 end

@@ -2,11 +2,8 @@
 # -*- ruby -*-
 
 require 'rake/clean'
-if require 'git'
-  GIT_ENABLED = true
-else
-  GIT_ENABLED = false
-end
+require 'logger'
+require 'git'
 begin
   require 'rdoc/task'
 rescue LoadError => ex
@@ -93,13 +90,14 @@ end
 task :default => :walk_the_path
 
 task :walk_the_path do
-  Rake::Task[:gen].invoke unless File.exists?(PROB_DIR)
+  unless File.exists?(PROB_DIR)
+    Rake::Task[:local_git_initialize].invoke
+  end
   cd PROB_DIR
   ruby 'path_to_enlightenment.rb'
-  if GIT_ENABLED
-    cd '..'   #undo the cd PROB_DIR above.
-    Rake::Task[:commit_progress].invoke
-  end
+  
+  cd '..'   #undo the cd PROB_DIR above.
+  Rake::Task[:commit_progress].invoke
 end
 
 if defined?(Rake::RDocTask)
@@ -183,14 +181,17 @@ task :run_all do
   end
 end
 
+desc "Initialize local git branch to track your adventure"
+task :local_git_initialize do
+  git_repo = Git.open('.', :log => Logger.new('gitlog.log'))
+  git_repo.checkout(git_repo.branch(ENV['USER']))
+  Rake::Task[:gen].invoke
+  git_repo.add('.')
+  git_repo.commit("Your adventure begins here.")
+end
+
 desc "Commit local change to a local git branch"
 task :commit_progress do
   git_repo = Git.open('.')
-  if git_repo.branch.to_s == 'master'
-    git_repo.checkout(git_repo.branch(ENV['USER']))
-    git_repo.add('.')
-  else
-    puts git_repo.branch.to_s + " is checked out instead"
-  end
   git_repo.commit("Your adventure continues!  See 'git log' for more details.")
 end

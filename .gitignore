@@ -3,3 +3,5 @@ dist
 .path_progress
 *.rbc
 gitlog.log
+koans/*
+

@@ -88,7 +88,8 @@ end
 task :default => :walk_the_path
 
 task :walk_the_path do
-  cd 'koans'
+  Rake::Task[:gen].invoke unless File.exists?(PROB_DIR)
+  cd PROB_DIR
   ruby 'path_to_enlightenment.rb'
 end
 

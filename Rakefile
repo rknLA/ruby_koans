@@ -92,7 +92,7 @@ task :default => :walk_the_path
 
 task :walk_the_path do
   unless File.exists?(PROB_DIR)
-    Rake::Task[:local_git_initialize].invoke
+    Rake::Task[:gen_with_git].invoke
   end
   cd PROB_DIR
   ruby 'path_to_enlightenment.rb'
@@ -183,7 +183,7 @@ task :run_all do
 end
 
 desc "Initialize local git branch to track your adventure"
-task :local_git_initialize do
+task :gen_with_git do
   git_repo = Git.open('.', :log => Logger.new('gitlog.log'))
   git_repo.branch(ENV['USER']).checkout
   Rake::Task[:gen].invoke

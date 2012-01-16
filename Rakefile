@@ -97,6 +97,7 @@ task :walk_the_path do
   cd PROB_DIR
   ruby 'path_to_enlightenment.rb'
   if GIT_ENABLED
+    cd '..'   #undo the cd PROB_DIR above.
     Rake::Task[:commit_progress].invoke
   end
 end
@@ -185,9 +186,11 @@ end
 desc "Commit local change to a local git branch"
 task :commit_progress do
   git_repo = Git.open('.')
-  if git_repo.branch == :master
-    puts "git master is checked out"
+  if git_repo.branch.to_s == 'master'
+    git_repo.checkout(git_repo.branch(ENV['USER']))
+    git_repo.add('.')
   else
-    puts git_repo.branch.to_s + " is checked out"
+    puts git_repo.branch.to_s + " is checked out instead"
   end
+  git_repo.commit("Your adventure continues!  See 'git log' for more details.")
 end

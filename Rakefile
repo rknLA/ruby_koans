@@ -3,6 +3,7 @@
 
 require 'rake/clean'
 require 'logger'
+gem 'git', '=1.1.2'
 require 'git'
 begin
   require 'rdoc/task'
@@ -186,7 +187,7 @@ task :local_git_initialize do
   git_repo = Git.open('.', :log => Logger.new('gitlog.log'))
   git_repo.branch(ENV['USER']).checkout
   Rake::Task[:gen].invoke
-  git_repo.add('.')
+  git_repo.add('.', :force => true)
   git_repo.commit("Your adventure begins here.")
 end
 
